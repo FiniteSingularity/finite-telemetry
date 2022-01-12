@@ -1,0 +1,6 @@
+{
+	"appId": "io.ionic.starter",
+	"appName": "FiniteTelemetry",
+	"webDir": "www",
+	"bundledWebRuntime": false
+}

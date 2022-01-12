@@ -1,0 +1,7 @@
+{
+  "name": "FiniteTelemetry",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

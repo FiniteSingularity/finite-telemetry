@@ -1,0 +1,60 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Twitch</ion-title>
+    <ion-buttons slot="end">
+      <ion-button
+        [color]="twitchChat.tts ? 'primary' : 'medium'"
+        (click)="twitchChat.tts = !twitchChat.tts"
+      ><ion-icon slot="icon-only" [name]="twitchChat.tts ? 'volume-high' : 'volume-mute'"></ion-icon></ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ng-container *ngFor="let event of twitchChat.chatEvents">
+      <ion-item *ngIf="event.eventType === 'TwitchChatMessage'">
+        <ion-label>
+          {{ event.event['tags']['display-name'] }}:
+          <p class="ion-text-wrap">{{ event.event['message-text'] }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="event.eventType === 'ChannelPointRedemption'" color="light">
+        <ion-label>
+          {{ event.event['reward']['title'] }}
+          <p class="ion-text-wrap" *ngIf="event.event['user_input'] !== ''">{{ event.event['user_name'] }} redeemed {{ event.event['reward']['title'] }}: {{ event.event['user_input'] }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="event.eventType === 'Cheer'" color="warning">
+        <ion-label>
+          CHEER
+          <p class="ion-text-wrap">{{ event.event['user_name'] }} just cheered {{ event.event['bits']}} bits!</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="event.eventType === 'Follow'" color="medium">
+        <ion-label>
+          FOLLOW
+          <p class="ion-text-wrap">{{ event.event['user_name'] }} just followed!</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="event.eventType === 'Sub'" color="success">
+        <ion-label>
+          SUBSCRIPTION
+          <p class="ion-text-wrap">{{ event.event['user_name'] }} just subscribed!</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="event.eventType === 'GiftSub'" color="success">
+        <ion-label>
+          GIFT SUBSCRIPTION
+          <p class="ion-text-wrap">{{ event.event['user_name'] }} just gifted {{ event.event['total'] }} subscriptions!</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="event.eventType === 'Raid'" color="primary">
+        <ion-label>
+          RAID
+          <p class="ion-text-wrap">{{ event.event['from_broadcaster_user_name'] }} just raided with {{ event.event['viewers'] }} viewers!</p>
+        </ion-label>
+      </ion-item>
+    </ng-container>
+  </ion-list>
+</ion-content>
