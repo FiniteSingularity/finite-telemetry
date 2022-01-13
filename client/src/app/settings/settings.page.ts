@@ -11,14 +11,8 @@ import { SetupTelemetryComponent } from './components/setup-telemetry/setup-tele
   styleUrls: ['./settings.page.scss'],
 })
 export class SettingsPage implements OnInit {
-  tauUrl$ = this.auth.tauUrl$;
-  tauUser$ = this.auth.tauUser$;
-  tauToken$ = this.auth.tauToken$;
-  tauConnected$ = this.auth.tauConnected$;
-  telemetryUrl$ = this.auth.telemetryUrl$;
-  telemetryUser$ = this.auth.telemetryUser$;
-  telemetryToken$ = this.auth.telemetryToken$;
-  telemetryConnected$ = this.auth.telemetryConnected$;
+  tauSettings$ = this.auth.tauSettings$;
+  telemetrySettings$ = this.auth.telemetrySettings$;
 
   constructor(
     private storage: StorageService,
@@ -28,27 +22,14 @@ export class SettingsPage implements OnInit {
 
   ngOnInit() {}
 
-  async setupTau() {
-    const modal = await this.modalCtrl.create({
-      component: SetupTauComponent,
-    });
+  async setup(type: 'tau' | 'telemetry') {
+    const component = type === 'tau' ? SetupTauComponent : SetupTelemetryComponent;
+    const modal = await this.modalCtrl.create({ component });
     await modal.present();
     const data = await modal.onDidDismiss();
 
     if (data && data.data) {
-      this.auth.setupTau(data.data);
-    }
-  }
-
-  async setupTelemetry() {
-    const modal = await this.modalCtrl.create({
-      component: SetupTelemetryComponent,
-    });
-    await modal.present();
-    const data = await modal.onDidDismiss();
-
-    if (data && data.data) {
-      this.auth.setupTelemetry(data.data);
+      this.auth.setup(data.data);
     }
   }
 }
