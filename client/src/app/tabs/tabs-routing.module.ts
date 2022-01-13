@@ -20,6 +20,10 @@ const routes: Routes = [
         loadChildren: () => import('../stream/stream.module').then( m => m.StreamPageModule)
       },
       {
+        path: 'settings',
+        loadChildren: () => import('../settings/settings.module').then( m => m.SettingsPageModule)
+      },
+      {
         path: '',
         redirectTo: '/tabs/twitch',
         pathMatch: 'full'

@@ -1,54 +1,60 @@
 import { Injectable } from '@angular/core';
 import { TextToSpeech } from '@capacitor-community/text-to-speech';
 import { Observable, Subject } from 'rxjs';
-import { TAUClient, TAUEvent, TwitchChatMessage } from '../lib/tau-client';
-import { ChannelPointRedemption, Cheer, Follow, GiftSub, Raid, Sub } from '../models/tau-events.models';
+import {
+  ChannelPointRedemption,
+  Cheer,
+  Follow,
+  GiftSub,
+  Raid,
+  Sub,
+  TAUEvent,
+  TwitchChatMessage,
+} from '../models/tau-events.models';
+import { TauService } from './tau.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TwitchChatService {
   tauEvent$: Observable<TAUEvent>;
-  tau = new TAUClient();
   tts = true;
   speaking = false;
   chatEvent$ = new Subject<TAUEvent>();
   chatEvents: TAUEvent[] = [];
   ttsEvents: string[] = [];
 
-  constructor() {
+  constructor(private tau: TauService) {
     this.init();
   }
 
   init() {
-    this.tau.connect();
     this.tauEvent$ = this.tau.tauEvent;
     this.tauEvent$.subscribe((event) => {
-        switch(event.eventType) {
-          case 'TwitchChatMessage':
-            console.log('chat message');
-            this.processChatMessage(event);
-            break;
-          case 'ChannelPointRedemption':
-            this.processChannelPointRedemption(event);
-            break;
-          case 'Cheer':
-            this.processCheer(event);
-            break;
-          case 'Raid':
-            this.processRaid(event);
-            break;
-          case 'Sub':
-            this.processSub(event);
-            break;
-          case 'GiftSub':
-            this.processGiftSubs(event);
-            break;
-          case 'Follow':
-            this.processFollow(event);
-        }
+      switch (event.eventType) {
+        case 'TwitchChatMessage':
+          console.log('chat message');
+          this.processChatMessage(event);
+          break;
+        case 'ChannelPointRedemption':
+          this.processChannelPointRedemption(event);
+          break;
+        case 'Cheer':
+          this.processCheer(event);
+          break;
+        case 'Raid':
+          this.processRaid(event);
+          break;
+        case 'Sub':
+          this.processSub(event);
+          break;
+        case 'GiftSub':
+          this.processGiftSubs(event);
+          break;
+        case 'Follow':
+          this.processFollow(event);
       }
-    );
+    });
   }
 
   handleEvent(event: TAUEvent) {
@@ -57,9 +63,9 @@ export class TwitchChatService {
   }
 
   handleTTS(message: string) {
-    if(this.tts) {
+    if (this.tts) {
       this.ttsEvents.push(message);
-      if(!this.speaking) {
+      if (!this.speaking) {
         this.speakNextMessage();
       }
     }
@@ -67,7 +73,7 @@ export class TwitchChatService {
 
   async speakNextMessage() {
     this.speaking = true;
-    while(this.ttsEvents.length > 0) {
+    while (this.ttsEvents.length > 0) {
       const message = this.ttsEvents.splice(0, 1);
       await TextToSpeech.speak({
         text: message[0],
@@ -83,7 +89,11 @@ export class TwitchChatService {
 
   processChatMessage(event: TAUEvent) {
     this.handleEvent(event);
-    this.handleTTS(`${(event.event as TwitchChatMessage).tags['display-name']} said. ${event.event['message-text']}`);
+    this.handleTTS(
+      `${(event.event as TwitchChatMessage).tags['display-name']} said. ${
+        event.event['message-text']
+      }`
+    );
   }
 
   processChannelPointRedemption(event: TAUEvent) {
@@ -104,14 +114,17 @@ export class TwitchChatService {
   processRaid(event: TAUEvent) {
     this.handleEvent(event);
     const raid = event.event as Raid;
-    this.handleTTS(`${raid.from_broadcaster_user_name} raided with ${raid.viewers} viewers.`);
+    this.handleTTS(
+      `${raid.from_broadcaster_user_name} raided with ${raid.viewers} viewers.`
+    );
   }
 
   processSub(event: TAUEvent) {
     this.handleEvent(event);
     const sub = event.event as Sub;
     const ttsString = `${sub.user_name} subscribed for ${sub.cumulative_months} months.`;
-    const ttsStringMsg = sub.message.text !== '' ? `They say: ${sub.message.text}` : '';
+    const ttsStringMsg =
+      sub.message.text !== '' ? `They say: ${sub.message.text}` : '';
     this.handleTTS(`${ttsString}${ttsStringMsg}`);
   }
 
