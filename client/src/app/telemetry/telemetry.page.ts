@@ -14,22 +14,8 @@ export class TelemetryPage {
 
   // 👇 You can make telemetry public. but I prefer doing this so I can keep things easy for testing
   readonly position$ = this.telemetry.position$;
-  readonly speed$ = this.telemetry.speed$.pipe(map((val) => val*2.23694));
+  readonly speed$ = this.telemetry.speed$.pipe(map((val) => val * 2.23694));
   readonly timestamp$ = this.telemetry.timestamp$;
 
-  constructor(
-    private telemetry: TelemetryService,
-  ) { }
-
-  async speak() {
-    await TextToSpeech.speak({
-      text: 'Test',
-      lang: 'en_US',
-      rate: 1.0,
-      pitch: 1.0,
-      volume: 1.0,
-      category: 'playback',
-    });
-  }
-
+  constructor(public telemetry: TelemetryService) {}
 }

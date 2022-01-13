@@ -1,6 +1,14 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>Telemetry</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="telemetry.streamData = !telemetry.streamData"
+        ><ion-icon
+          slot="icon-only"
+          [name]="telemetry.streamData ? 'cloud-upload' : 'cloud-offline'"
+        ></ion-icon
+      ></ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -8,20 +16,30 @@
   <ion-list *ngIf="position$ | async as position">
     <ion-item>
       <ion-label>Altitude:</ion-label>
-      <ion-text slot="end">{{ (position.alt * 3.28084)|number:"1.0-0" }}</ion-text>
+      <ion-text slot="end"
+        >{{ (position.alt * 3.28084)|number:"1.0-0" }}</ion-text
+      >
     </ion-item>
     <ion-item>
       <ion-label>Lat/Lng:</ion-label>
-      <ion-text slot="end">{{ position.lat|number:"1.6-6" }}, {{ position.lng|number:".6" }}</ion-text>
+      <ion-text slot="end"
+        >{{ position.lat|number:"1.6-6" }}, {{ position.lng|number:".6"
+        }}</ion-text
+      >
     </ion-item>
-    <ion-item *ngIf="speed$ | async as speed">
+    <ion-item *ngIf="speed$ | async as speed; else noSpeed">
       <ion-label>Speed:</ion-label>
       <ion-text slot="end">{{ speed|number:"1.2-2"}} mph</ion-text>
     </ion-item>
+    <ng-template #noSpeed>
+      <ion-item>
+        <ion-label>Speed:</ion-label>
+        <ion-text slot="end">0.00 mph</ion-text>
+      </ion-item>
+    </ng-template>
     <ion-item *ngIf="timestamp$ | async as timestamp">
       <ion-label>Timestamp:</ion-label>
       <ion-text slot="end">{{ timestamp }}</ion-text>
     </ion-item>
   </ion-list>
-  <ion-button (click)="speak()">Speak</ion-button>
 </ion-content>
