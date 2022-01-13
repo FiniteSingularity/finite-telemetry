@@ -22,6 +22,7 @@ class Common(Configuration):
         'rest_framework',            # utilities for rest apis
         'rest_framework.authtoken',  # token authentication
         'django_filters',            # for filtering rest endpoints
+        'corsheaders',
 
         # Your apps
         'finitetelemetry.users',
@@ -30,6 +31,7 @@ class Common(Configuration):
 
     # https://docs.djangoproject.com/en/2.0/topics/http/middleware/
     MIDDLEWARE = (
+        'corsheaders.middleware.CorsMiddleware',
         'django.middleware.security.SecurityMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
         'django.middleware.common.CommonMiddleware',
@@ -40,6 +42,7 @@ class Common(Configuration):
     )
 
     ALLOWED_HOSTS = ["*"]
+    CORS_ALLOW_ALL_ORIGINS = True
     ROOT_URLCONF = 'finitetelemetry.urls'
     SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
     WSGI_APPLICATION = 'finitetelemetry.wsgi.application'
@@ -51,10 +54,16 @@ class Common(Configuration):
         ('Author', 'finitesingularityttv@gmail.com'),
     )
 
+    db_user = os.getenv('DJANGO_DB_USER')
+    db_pw = os.getenv('DJANGO_DB_PW')
+    db_host = os.getenv('DJANGO_DB_HOST')
+    db_port = os.getenv('DJANGO_DB_PORT', 5432)
+    db_name = os.getenv('DJANGO_DB')
+
     # Postgres
     DATABASES = {
         'default': dj_database_url.config(
-            default='postgres://postgres:@postgres:5432/postgres',
+            default=f'postgres://{db_user}:{db_pw}@{db_host}:{db_port}/{db_name}',
             conn_max_age=int(os.getenv('POSTGRES_CONN_MAX_AGE', 600))
         )
     }
@@ -187,7 +196,7 @@ class Common(Configuration):
     REST_FRAMEWORK = {
         'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
         'PAGE_SIZE': int(os.getenv('DJANGO_PAGINATION_LIMIT', 10)),
-        'DATETIME_FORMAT': '%Y-%m-%dT%H:%M:%S%z',
+        'DATETIME_FORMAT': '%Y-%m-%dT%H:%M:%S.%f%z',
         'DEFAULT_RENDERER_CLASSES': (
             'rest_framework.renderers.JSONRenderer',
             'rest_framework.renderers.BrowsableAPIRenderer',
@@ -198,13 +207,13 @@ class Common(Configuration):
         'DEFAULT_AUTHENTICATION_CLASSES': (
             'rest_framework.authentication.SessionAuthentication',
             'rest_framework.authentication.TokenAuthentication',
-        )
+        ),
     }
 
     ASGI_APPLICATION = 'finitetelemetry.asgi.application'
     # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-    REDIS_ENDPOINT = 'redis:6379'
+    REDIS_ENDPOINT = os.environ.get('REDIS_ENDPOINT','redis:6379')
     REDIS_SERVER = f'redis://{REDIS_ENDPOINT}'
     CHANNEL_LAYERS = {
         'default': {
@@ -214,3 +223,6 @@ class Common(Configuration):
             },
         },
     }
+
+    USE_X_FORWARDED_HOST = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

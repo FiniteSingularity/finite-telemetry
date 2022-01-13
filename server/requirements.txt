@@ -38,3 +38,9 @@ boto3==1.20.26
 # Channels
 channels==3.0.4
 channels-redis==3.3.0
+
+# CORS
+django-cors-headers==3.11.0
+
+# Static Files
+whitenoise==5.2.0

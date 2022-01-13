@@ -10,6 +10,7 @@ COPY . code
 WORKDIR code
 
 EXPOSE 8000
-
+RUN ["chmod", "+x", "./wait_for_postgres.py"]
+RUN ["chmod", "+x", "./scripts/start.sh"]
 # Run the production server
-CMD newrelic-admin run-program gunicorn --bind 0.0.0.0:$PORT --access-logfile - finitetelemetry.wsgi:application
+CMD bash -c "./scripts/start.sh"
