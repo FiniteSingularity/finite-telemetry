@@ -9,59 +9,63 @@
     <ion-list-header>
       <ion-label color="primary">Telemetry Server</ion-label>
     </ion-list-header>
-    <ion-item>
-      <ion-label>Address</ion-label>
-      <ion-text slot="end">{{ telemetryUrl$ | async }}</ion-text>
-    </ion-item>
-    <ion-item>
-      <ion-label>Username</ion-label>
-      <ion-text slot="end">{{ telemetryUser$ | async }}</ion-text>
-    </ion-item>
-    <ion-item>
-      <ion-label>Status</ion-label>
-      <ion-icon
-        [color]="(telemetryToken$ | async) ? 'primary' : 'medium'"
-        slot="end"
-        name="lock-closed"
-      ></ion-icon>
-      <ion-icon
-        [color]="(tauConnected$ | async) ? 'primary': 'medium'"
-        slot="end"
-        name="wifi"
-      ></ion-icon>
-    </ion-item>
+    <ng-container *ngIf="telemetrySettings$ | async as telemetrySettings">
+      <ion-item>
+        <ion-label>Address</ion-label>
+        <ion-text slot="end">{{ telemetrySettings.url }}</ion-text>
+      </ion-item>
+      <ion-item>
+        <ion-label>Username</ion-label>
+        <ion-text slot="end">{{ telemetrySettings.user }}</ion-text>
+      </ion-item>
+      <ion-item>
+        <ion-label>Status</ion-label>
+        <ion-icon
+          [color]="(telemetrySettings.token) ? 'primary' : 'medium'"
+          slot="end"
+          name="lock-closed"
+        ></ion-icon>
+        <ion-icon
+          [color]="(telemetrySettings.connected) ? 'primary': 'medium'"
+          slot="end"
+          name="wifi"
+        ></ion-icon>
+      </ion-item>
+    </ng-container>
     <ion-item>
       <ion-buttons slot="end">
-        <ion-button (click)="setupTelemetry()">Set Up</ion-button>
+        <ion-button (click)="setup('telemetry')">Set Up</ion-button>
       </ion-buttons>
     </ion-item>
     <ion-list-header>
       <ion-label color="primary">TAU Server</ion-label>
     </ion-list-header>
-    <ion-item>
-      <ion-label>Address</ion-label>
-      <ion-text slot="end">{{ tauUrl$ | async }}</ion-text>
-    </ion-item>
-    <ion-item>
-      <ion-label>Username</ion-label>
-      <ion-text slot="end">{{ tauUser$ | async }}</ion-text>
-    </ion-item>
-    <ion-item>
-      <ion-label>Status</ion-label>
-      <ion-icon
-        [color]="(tauToken$ | async) ? 'primary' : 'medium'"
-        slot="end"
-        name="lock-closed"
-      ></ion-icon>
-      <ion-icon
-        [color]="(tauConnected$ | async) ? 'primary': 'medium'"
-        slot="end"
-        name="wifi"
-      ></ion-icon>
-    </ion-item>
+    <ng-container *ngIf="tauSettings$ | async as tauSettings">
+      <ion-item>
+        <ion-label>Address</ion-label>
+        <ion-text slot="end">{{ tauSettings.url }}</ion-text>
+      </ion-item>
+      <ion-item>
+        <ion-label>Username</ion-label>
+        <ion-text slot="end">{{ tauSettings.user }}</ion-text>
+      </ion-item>
+      <ion-item>
+        <ion-label>Status</ion-label>
+        <ion-icon
+          [color]="(tauSettings.token) ? 'primary' : 'medium'"
+          slot="end"
+          name="lock-closed"
+        ></ion-icon>
+        <ion-icon
+          [color]="(tauSettings.connected) ? 'primary': 'medium'"
+          slot="end"
+          name="wifi"
+        ></ion-icon>
+      </ion-item>
+    </ng-container>
     <ion-item>
       <ion-buttons slot="end">
-        <ion-button (click)="setupTau()">Set Up</ion-button>
+        <ion-button (click)="setup('tau')">Set Up</ion-button>
       </ion-buttons>
     </ion-item>
   </ion-list>

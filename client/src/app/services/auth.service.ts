@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import { ComponentStore } from '@ngrx/component-store';
-import { forkJoin, switchMap, tap } from 'rxjs';
-import { StorageService } from './storage.service';
+import {Injectable} from '@angular/core';
+import {ComponentStore} from '@ngrx/component-store';
+import {forkJoin, Observable, switchMap, tap} from 'rxjs';
+import {StorageService} from './storage.service';
 
 export interface ServerAuth {
   tauUrl: string;
@@ -41,6 +41,15 @@ export class AuthService extends ComponentStore<ServerAuth> {
   readonly tauUser$ = this.select((s) => s.tauUser);
   readonly tauToken$ = this.select((s) => s.tauToken);
   readonly tauConnected$ = this.select((s) => s.tauConnected);
+
+  readonly tauSettings$: Observable<{ url: string; user: string; token: string; connected: boolean }> = this.select(
+    this.tauUrl$,
+    this.tauUser$,
+    this.tauToken$,
+    this.tauConnected$,
+    (url, user, token, connected) => ({url, user, token, connected})
+  );
+
   readonly tauConnection$ = this.select(
     this.tauUrl$,
     this.tauToken$,
@@ -54,6 +63,15 @@ export class AuthService extends ComponentStore<ServerAuth> {
   readonly telemetryUser$ = this.select((s) => s.telemetryUser);
   readonly telemetryToken$ = this.select((s) => s.telemetryToken);
   readonly telemetryConnected$ = this.select((s) => s.telemetryConnected);
+
+  readonly telemetrySettings$: Observable<{ url: string; user: string; token: string; connected: boolean }> = this.select(
+    this.telemetryUrl$,
+    this.telemetryUser$,
+    this.telemetryToken$,
+    this.telemetryConnected$,
+    (url, user, token, connected) => ({url, user, token, connected})
+  );
+
   readonly telemetryConnection$ = this.select(
     this.telemetryUrl$,
     this.telemetryToken$,
@@ -69,8 +87,7 @@ export class AuthService extends ComponentStore<ServerAuth> {
 
   readonly load = this.effect((trigger$) =>
     trigger$.pipe(
-      switchMap(() => {
-        return forkJoin(
+      switchMap(() => forkJoin(
           Object.entries(serverAuthInitialState).reduce(
             (promises, [key, defaultValue]) => {
               if (
@@ -86,36 +103,24 @@ export class AuthService extends ComponentStore<ServerAuth> {
             },
             {}
           )
-        ).pipe(tap((state) => this.patchState(state)));
-      })
+        ).pipe(tap((state) => this.patchState(state))))
     )
   );
 
-  readonly setupTau = this.effect<{
+  readonly setup = this.effect<{
     tauUrl: string;
     tauUser: string;
     tauToken: string;
-  }>((tauConfig$) =>
-    tauConfig$.pipe(
-      tap((tauConfig) => {
-        this.patchState(tauConfig);
-        Object.keys(tauConfig).forEach((key) => {
-          this.storage.set(key, tauConfig[key]);
-        });
-      })
-    )
-  );
-
-  readonly setupTelemetry = this.effect<{
+  } | {
     telemetryUrl: string;
     telemetryUser: string;
     telemetryToken: string;
-  }>((telemetryConfig$) =>
-    telemetryConfig$.pipe(
-      tap((telemetryConfig) => {
-        this.patchState(telemetryConfig);
-        Object.keys(telemetryConfig).forEach((key) => {
-          this.storage.set(key, telemetryConfig[key]);
+  }>((config$) =>
+    config$.pipe(
+      tap((config) => {
+        this.patchState(config);
+        Object.keys(config).forEach((key) => {
+          this.storage.set(key, config[key]);
         });
       })
     )
