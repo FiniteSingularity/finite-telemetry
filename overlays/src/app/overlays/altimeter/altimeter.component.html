@@ -1,0 +1,25 @@
+<ng-container *ngIf="altData$ | async as altData">
+  <div class="max-alt">
+    {{ altData.maxAltitude * distanceConv | number: "1.0-0" }}
+    {{ distanceLabel }}
+  </div>
+  <div class="vertical-meter" id="vertical-meter"></div>
+  <div class="min-alt">
+    {{ altData.minAltitude * distanceConv | number: "1.0-0" }}
+    {{ distanceLabel }}
+  </div>
+  <div
+    class="current-alt"
+    [ngStyle]="
+      altInRange(
+        altData.minAltitude!,
+        altData.maxAltitude!,
+        altData.curAltitude!
+      )
+    "
+  >
+    <div class="label">{{ altData.curAltitude! * distanceConv | number: "1.0-0" }} {{ distanceLabel }}</div>
+    <div class="dot"></div>
+  </div>
+  <ng-container></ng-container
+></ng-container>

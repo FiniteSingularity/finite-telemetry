@@ -1,0 +1,6 @@
+<div *ngIf="telemetry$ | async as telem">
+  <span
+    >{{ telem.speed * speedScaling | number: "1.0-0" }}
+    {{ speedScaleStr }}</span
+  >
+</div>

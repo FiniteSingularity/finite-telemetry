@@ -1,0 +1,83 @@
+:host {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  div {
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.8);
+  }
+
+  div.vertical-meter {
+    position: absolute;
+    right: 0;
+    top: 60px;
+    bottom: 60px;
+    width: 16px;
+    border-top-left-radius: 9px;
+    border-bottom-left-radius: 9px;
+    background-color: rgba(0, 0, 0, 0.8);
+    border: 2px solid #ffffff;
+    border-right: none;
+  }
+
+  div.max-alt {
+    position: absolute;
+    right: 8px;
+    top: 12px;
+    height: 15px;
+    padding: 10px;
+    font-size: 20px;
+    color: #ffffff;
+    background-color: rgba(0, 0, 0, 0.8);
+    line-height: 15px;
+    border-radius: 6px;
+  }
+
+  div.min-alt {
+    position: absolute;
+    right: 8px;
+    bottom: 12px;
+    height: 15px;
+    padding: 10px;
+    font-size: 20px;
+    color: #ffffff;
+    background-color: rgba(0, 0, 0, 0.8);
+    line-height: 15px;
+    border-radius: 6px;
+  }
+
+  div.current-alt {
+    position: absolute;
+    right: 0px;
+    top: 50%;
+    z-index: 100;
+    width: 100px;
+    div.dot {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 14px;
+      height: 14px;
+      background-color: rgba(255, 255, 255, 1.0);
+      border-top-left-radius: 8px;
+      border-bottom-left-radius: 8px;
+      border: 2px solid rgba(0, 0, 0, 0.75);
+      border-right: none;
+      box-shadow: none;
+    }
+    div.label {
+      position: absolute;
+      right: 24px;
+      top: -10px;
+      height: 15px;
+      padding: 10px;
+      font-size: 20px;
+      color: #ffffff;
+      background-color: rgba(0, 0, 0, 0.8);
+      line-height: 15px;
+      border-radius: 6px;
+    }
+  }
+}

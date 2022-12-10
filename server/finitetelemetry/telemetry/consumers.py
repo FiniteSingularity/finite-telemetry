@@ -26,6 +26,13 @@ class TelemtryInputConsumer(AsyncJsonWebsocketConsumer):
         if self.scope['user'].id:
             data = json.loads(text_data)
             channel_layer = get_channel_layer()
+            if 'command' in data:
+                await channel_layer.group_send('telemetryoutput', {
+                    'type': 'telemetryoutput.event',
+                    'data': data
+                })
+                return
+                
             serializer = TelemetrySerializer(data=data, many=False)
             serializer.is_valid(raise_exception=True)
             await database_sync_to_async(save_serializer)(serializer)
