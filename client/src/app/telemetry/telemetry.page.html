@@ -41,5 +41,11 @@
       <ion-label>Timestamp:</ion-label>
       <ion-text slot="end">{{ timestamp }}</ion-text>
     </ion-item>
+    <ion-item>
+      <ion-button (click)="setAltitude()">Set Altitude</ion-button>
+    </ion-item>
+    <ion-item>
+      <ion-button (click)="resetOverlay()">Reset Overlay</ion-button>
+    </ion-item>
   </ion-list>
 </ion-content>

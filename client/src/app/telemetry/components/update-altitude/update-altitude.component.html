@@ -1,0 +1,31 @@
+<ion-header>
+  <ion-toolbar><ion-title>Set Altitude Range</ion-title></ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-list>
+    <ion-item>
+      <ion-label>Base Altitude</ion-label>
+      <ion-input
+        class="ion-text-right"
+        type="number"
+        [(ngModel)]="baseAltitude"
+      ></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Summit Altitude</ion-label>
+      <ion-input
+        class="ion-text-right"
+        type="number"
+        [(ngModel)]="summitAltitude"
+      ></ion-input>
+    </ion-item>
+  </ion-list>
+</ion-content>
+<ion-footer>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button (click)="cancel()">Cancel</ion-button>
+      <ion-button (click)="save()" [disabled]="!valid()">Save</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

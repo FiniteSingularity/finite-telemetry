@@ -59,6 +59,14 @@ export class TelemetryService extends ComponentStore<Location> {
     super(positionInitialState);
   }
 
+  updateAltitudeRange(payload: { minAlt: number; maxAlt: number }) {
+    this.ws.send({ command: 'update-altitude', ...payload });
+  }
+
+  resetOverlay() {
+    this.ws.send({ command: 'reset-overlay' });
+  }
+
   readonly watchPosition = this.effect((trigger$) =>
     trigger$.pipe(
       switchMap(() => {
