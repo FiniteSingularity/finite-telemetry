@@ -8,33 +8,46 @@ const routes: Routes = [
     component: TabsPage,
     children: [
       {
+        path: 'camera',
+        loadChildren: () =>
+          import('../camera/camera.module').then((m) => m.CameraPageModule),
+      },
+      {
         path: 'twitch',
-        loadChildren: () => import('../twitch/twitch.module').then( m => m.TwitchPageModule)
+        loadChildren: () =>
+          import('../twitch/twitch.module').then((m) => m.TwitchPageModule),
       },
       {
         path: 'telemetry',
-        loadChildren: () => import('../telemetry/telemetry.module').then( m => m.TelemetryPageModule)
+        loadChildren: () =>
+          import('../telemetry/telemetry.module').then(
+            (m) => m.TelemetryPageModule
+          ),
       },
       {
         path: 'stream',
-        loadChildren: () => import('../stream/stream.module').then( m => m.StreamPageModule)
+        loadChildren: () =>
+          import('../stream/stream.module').then((m) => m.StreamPageModule),
       },
       {
         path: 'settings',
-        loadChildren: () => import('../settings/settings.module').then( m => m.SettingsPageModule)
+        loadChildren: () =>
+          import('../settings/settings.module').then(
+            (m) => m.SettingsPageModule
+          ),
       },
       {
         path: '',
         redirectTo: '/tabs/twitch',
-        pathMatch: 'full'
-      }
-    ]
+        pathMatch: 'full',
+      },
+    ],
   },
   {
     path: '',
     redirectTo: '/tabs/twitch',
-    pathMatch: 'full'
-  }
+    pathMatch: 'full',
+  },
 ];
 
 @NgModule({

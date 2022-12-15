@@ -1,3 +1,4 @@
 export const environment = {
-  production: true
+  production: true,
+  belaRemoteAddress: 'wss://belabox.dobossy.net/ws/client',
 };

@@ -1,0 +1,131 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>BelaBox</ion-title>
+    <ion-text
+      class="ion-margin-end"
+      slot="end"
+      *ngIf="belaBox.sensors$ | async as sensors"
+    >
+      <ion-icon name="thermometer-outline"></ion-icon>
+      {{ sensors['SoC temperature'] }}
+    </ion-text>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="view">
+      <ion-segment-button value="streaming">Streaming</ion-segment-button>
+      <ion-segment-button value="power">Power</ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+  <ion-toolbar color="danger" *ngIf="(belaBox.connected$ | async) === false">
+    <ion-title>Belabox is not connected.</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ng-container *ngIf="view==='streaming'">
+    <ion-list *ngIf="belaBox.status$ | async as status">
+      <ion-item-divider color="primary">
+        <ion-label>Stream Control</ion-label>
+      </ion-item-divider>
+      <ng-container>
+        <ion-button
+          expand="block"
+          class="ion-margin"
+          [color]="status.is_streaming ? 'danger' : 'success'"
+          (click)="stream(status.is_streaming ? 'stop' : 'start')"
+          >{{ status.is_streaming ? 'Stop Streaming' : 'Start Streaming'
+          }}</ion-button
+        >
+      </ng-container>
+      <ion-item *ngIf="config">
+        <ion-label position="stacked"
+          >Max Bitrate {{ config.max_br }} Kbps</ion-label
+        >
+        <ion-range
+          *ngIf="belaBox.status$ | async as status"
+          [(ngModel)]="config.max_br"
+          (ionChange)="mbrChange($event, status.is_streaming)"
+          [snaps]="true"
+          [ticks]="false"
+          [min]="500"
+          [max]="12000"
+          [step]="250"
+        ></ion-range>
+      </ion-item>
+      <ion-item>
+        <ion-label><strong class="pad-start">Interface(IP)</strong></ion-label>
+        <ion-text slot="end"><strong>Bitrate</strong></ion-text>
+      </ion-item>
+      <ion-item *ngFor="let iface of netif">
+        <ion-label>{{ iface.id }} ({{ iface.iface.ip }})</ion-label>
+        <ion-checkbox
+          slot="start"
+          (ionChange)="netifChange($event, iface)"
+          [(ngModel)]="iface.iface.enabled"
+        ></ion-checkbox>
+        <ion-text slot="end"
+          >{{ iface.iface.tp * 8 / 1024 | number: '1.0-0' }} Kbps</ion-text
+        >
+      </ion-item>
+      <ion-item-divider color="primary">
+        <ion-label>Encoder Settings</ion-label>
+      </ion-item-divider>
+      <ion-item *ngIf="config">
+        <ion-label position="stacked">Pipeline</ion-label>
+        <ion-select
+          [(ngModel)]="config.pipeline"
+          interface="popover"
+          [disabled]="status.is_streaming"
+        >
+          <ion-select-option
+            *ngFor="let pipeline of pipelines"
+            [value]="pipeline.id"
+            >{{ pipelineName(pipeline.name) }}</ion-select-option
+          >
+        </ion-select>
+      </ion-item>
+      <ion-item *ngIf="config">
+        <ion-label position="stacked"
+          >Audio delay: {{ config.delay }} ms</ion-label
+        >
+        <ion-range
+          [(ngModel)]="config.delay"
+          [disabled]="status.is_streaming"
+          [snaps]="true"
+          [ticks]="false"
+          [min]="-2000"
+          [max]="2000"
+          [step]="20"
+        ></ion-range>
+      </ion-item>
+      <ion-item *ngIf="config">
+        <ion-label>Dynamic Bitrate Overlay</ion-label>
+        <ion-checkbox
+          slot="start"
+          [disabled]="status.is_streaming"
+          [(ngModel)]="config.bitrate_overlay"
+        ></ion-checkbox>
+      </ion-item>
+    </ion-list>
+  </ng-container>
+  <ng-container *ngIf="view==='power'">
+    <ion-list *ngIf="belaBox.status$ | async as status">
+      <ion-button
+        class="ion-margin"
+        color="warning"
+        expand="block"
+        [disabled]="status.is_streaming"
+        (click)="sendCommand('reboot')"
+        >Restart</ion-button
+      >
+      <ion-button
+        class="ion-margin"
+        color="danger"
+        expand="block"
+        [disabled]="status.is_streaming"
+        (click)="sendCommand('poweroff')"
+        >Shut Down</ion-button
+      >
+    </ion-list>
+  </ng-container>
+</ion-content>
