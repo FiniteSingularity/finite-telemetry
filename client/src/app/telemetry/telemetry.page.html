@@ -13,6 +13,9 @@
 </ion-header>
 
 <ion-content>
+  <ion-toolbar color="success" *ngIf="telemetry.streamData">
+    <ion-title>Sending Telemetry...</ion-title>
+  </ion-toolbar>
   <ion-list *ngIf="position$ | async as position">
     <ion-item>
       <ion-label>Altitude:</ion-label>
