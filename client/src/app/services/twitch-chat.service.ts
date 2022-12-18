@@ -89,11 +89,16 @@ export class TwitchChatService {
 
   processChatMessage(event: TAUEvent) {
     this.handleEvent(event);
-    this.handleTTS(
-      `${(event.event as TwitchChatMessage).tags['display-name']} said. ${
-        event.event['message-text']
-      }`
-    );
+    if (
+      (event.event as TwitchChatMessage).tags['display-name'] !==
+      'FiniteSingularity'
+    ) {
+      this.handleTTS(
+        `${(event.event as TwitchChatMessage).tags['display-name']} said. ${
+          event.event['message-text']
+        }`
+      );
+    }
   }
 
   processChannelPointRedemption(event: TAUEvent) {
