@@ -24,6 +24,7 @@ export const positionInitialState: Location = {
   altitude: 0.0,
   speed: 0.0,
   bearing: 0.0,
+  simulated: false,
 };
 
 @Injectable({
@@ -51,26 +52,11 @@ export class TelemetryService extends ComponentStore<Location> {
   streamData = false;
 
   callbackId: string;
-  constructor(
-    private ws: TelemetryWebSocketService,
-    private ngZone: NgZone,
-    private twitchChat: TwitchChatService
-  ) {
-    super(positionInitialState);
-  }
-
-  updateAltitudeRange(payload: { minAlt: number; maxAlt: number }) {
-    this.ws.send({ command: 'update-altitude', ...payload });
-  }
-
-  resetOverlay() {
-    this.ws.send({ command: 'reset-overlay' });
-  }
 
   readonly watchPosition = this.effect((trigger$) =>
     trigger$.pipe(
-      switchMap(() => {
-        return BackgroundGeolocation.addWatcher(
+      switchMap(() =>
+        BackgroundGeolocation.addWatcher(
           {
             backgroundMessage: 'Cancel to prevent battery drain.',
             requestPermissions: true,
@@ -108,8 +94,8 @@ export class TelemetryService extends ComponentStore<Location> {
               });
             });
           }
-        );
-      }), // this is now Observable<CallbackID>
+        )
+      ), // this is now Observable<CallbackID>
       tap({
         next: (callbackId: string) => {
           this.callbackId = callbackId;
@@ -123,4 +109,20 @@ export class TelemetryService extends ComponentStore<Location> {
       })
     )
   );
+
+  constructor(
+    private ws: TelemetryWebSocketService,
+    private ngZone: NgZone,
+    private twitchChat: TwitchChatService
+  ) {
+    super(positionInitialState);
+  }
+
+  updateAltitudeRange(payload: { minAlt: number; maxAlt: number }) {
+    this.ws.send({ command: 'update-altitude', ...payload });
+  }
+
+  resetOverlay() {
+    this.ws.send({ command: 'reset-overlay' });
+  }
 }
